@@ -78,48 +78,48 @@
     test = [[ICMultiDelegateTest alloc] init];
     
     ICTestImplementation *test1 = [[ICTestImplementation alloc] initWithName:@"test1"];
+
     ICTestImplementation *test2 = [[ICTestImplementation alloc] initWithName:@"test2"];
+
     ICTestImplementation *test3 = [[ICTestImplementation alloc] initWithName:@"test3"];
+
     ICTestImplementation *test4 = [[ICTestImplementation alloc] initWithName:@"test4"];
+
     ICTestImplementation *test5 = [[ICTestImplementation alloc] initWithName:@"test5"];
+
     ICTestImplementation *test6 = [[ICTestImplementation alloc] initWithName:@"test6"];
-    
+
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test1];
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test2];
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test3];
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test4];
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test5];
+    [NSThread detachNewThreadSelector:@selector(addDelegate:) toTarget:test.icMultiDelegate withObject:test6];
+
     dispatch_queue_t queue = dispatch_queue_create("com.example.myqueue", DISPATCH_QUEUE_CONCURRENT);
-
     dispatch_async(queue, ^{
-        [test.icMultiDelegate addDelegate:test1];
-        [test invoke];
-    });
-    
-    dispatch_async(queue, ^{
-        [test.icMultiDelegate addDelegate:test2];
         [test invoke];
     });
     
     dispatch_async(queue, ^{
         [test invoke];
-        [test.icMultiDelegate addDelegate:test3];
     });
     
     dispatch_async(queue, ^{
         [test invoke];
-        [test.icMultiDelegate addDelegate:test4];
     });
     
     dispatch_async(queue, ^{
-        [test.icMultiDelegate addDelegate:test5];
         [test invoke];
     });
     
     dispatch_async(queue, ^{
-        [test.icMultiDelegate addDelegate:test6];
         [test invoke];
     });
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    dispatch_async(queue, ^{
+        [test invoke];
+    });
 }
 
 @end

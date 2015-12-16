@@ -86,7 +86,6 @@ static char kICMultiDelegateQueueKey;
     SEL selector = [anInvocation selector];
     
     void (^ lookupBlock)() = ^{
-        NSLog(@"lookupBlock");
         for (NSObject *delegate in _delegates) {
             if ([delegate respondsToSelector:selector]) {
                 NSInvocation *cloneInvocation = [self cloneInvocation:anInvocation];
@@ -107,13 +106,12 @@ static char kICMultiDelegateQueueKey;
         }
     };
     
-    while (![_lock lockBeforeDate:[NSDate distantFuture]]);
+    [_lock lock];
     lookupBlock();
     [_lock unlock];
 }
 
-- (NSInvocation *)cloneInvocation:(NSInvocation *)originalInvocation
-{
+- (NSInvocation *)cloneInvocation:(NSInvocation *)originalInvocation {
     NSMethodSignature *methodSignature = [originalInvocation methodSignature];
     
     NSInvocation *cloneInvocation = [NSInvocation invocationWithMethodSignature:methodSignature];
@@ -156,15 +154,13 @@ static char kICMultiDelegateQueueKey;
     
     delegate.multiDelegateQueue = dispatchQueue;
     
-    while (![_lock lockBeforeDate:[NSDate distantFuture]]);
+    [_lock lock];
     [_delegates addObject:delegate];
     [_lock unlock];
-    
-    NSLog(@"----------------");
 }
 
 - (void)removeDelegate:(id)delegate {
-    while (![_lock lockBeforeDate:[NSDate distantFuture]]);
+    [_lock lock];
     [_delegates removeObject:delegate];
     [_lock unlock];
 }
